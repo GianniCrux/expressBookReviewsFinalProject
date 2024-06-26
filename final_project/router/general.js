@@ -33,8 +33,22 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
+async function fetchBooks() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(books);
+        }, 100);
+    });
+}
+
 public_users.get('/',function (req, res) {
-    res.send(JSON.stringify(books, null, 4));
+ fetchBooks()
+    .then((books) => {
+        res.send(JSON.stringify(books, null, 4));
+    })
+    .catch((error) => {
+        res.status(500).send('Error fetching books');
+    });
 });
 
 // Get book details based on ISBN
