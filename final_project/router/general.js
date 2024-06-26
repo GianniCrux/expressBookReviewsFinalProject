@@ -23,6 +23,11 @@ public_users.post("/register", (req,res) => {
     const password = req.body.password;
 
     if (username && password) {
+        
+        if (!isValid(username)) { 
+            return res.status(400).json({ message: "Invalid username format." }); // or customize the error message
+        }
+
         if (!doesExist (username)) {
             users.push({ "username": username, "password": password });
             return res.status(200).json({ message: "User successfully registered. Now you can login"})
