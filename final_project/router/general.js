@@ -4,6 +4,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+
 const doesExist = (username) => {
     let userswithsamename = users.filter((user) => {
         return user.username === username;
@@ -47,19 +48,29 @@ public_users.get('/',function (req, res) {
         res.send(JSON.stringify(books, null, 4));
     })
     .catch((error) => {
-        res.status(500).send('Error fetching books');
+        res.status(500).json({ error: 'Error fetching books' });
     });
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {   
-    const isbn = req.params.isbn;
+function getBookByIsbn(isbn) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const booksArray = Object.values(books);
+            const filtered_books = booksArray.filter((books) => books.isbn === isbn);
+            resolve(filtered_books);
+        }, 100)
+    });
+}
 
-    const booksArray = Object.values(books);
-
-    let filtered_books = booksArray.filter((books) => books.isbn === isbn);
-
-    res.send(filtered_books);
+public_users.get('/isbn/:isbn', async function (req, res) {   
+    try {
+        const isbn = req.params.isbn;
+        const filtered_books = await getBookByIsbn(isbn);
+        res.send(filtered_books);
+    } catch (error) {
+        res.status(500).send('Error Fetching books by isbn');
+    }
 });
 
 // Get book details based on author
