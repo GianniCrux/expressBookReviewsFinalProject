@@ -23,7 +23,11 @@ public_users.post("/register", (req,res) => {
     const password = req.body.password;
 
     if (username && password) {
-        
+
+        if (!username || !password) {
+            return res.status(400).json({ error: "Username and password are required." });
+        }
+
         if (!isValid(username)) { 
             return res.status(400).json({ message: "Invalid username format." }); // or customize the error message
         }
